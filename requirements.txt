@@ -1,2 +1,2 @@
-pillow=9.2.0
-instagrapi=1.16.29
+pillow
+instagrapi
