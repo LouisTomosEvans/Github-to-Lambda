@@ -34,4 +34,4 @@ def lambda_handler(event, context):
     for media in UserMedia:
         mediaList.append(media.__dict__)
 
-    print(json.dumps(mediaList, sort_keys=True, default=str))
+    return json.dumps(mediaList, sort_keys=True, default=str)
