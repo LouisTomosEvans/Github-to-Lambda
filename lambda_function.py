@@ -94,7 +94,7 @@ def lambda_handler(event, context):
                 'S': '1'
             },
             'type': {
-                'N': media.media_type
+                'N': str(media.media_type)
             },
             'location': {
                 'S': media.location
