@@ -85,6 +85,8 @@ def lambda_handler(event, context):
             media.location = json.dumps(vars(media.location))
         if media.caption_text is None:
             media.caption_text = ""
+        if media.thumbnail_url is None:
+            media.thumbnail_url = ""
 
         data = client.put_item(
         TableName='media',
