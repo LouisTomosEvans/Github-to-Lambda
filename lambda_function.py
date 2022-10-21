@@ -79,7 +79,11 @@ def lambda_handler(event, context):
     UserMedia = Instagram_Get_User_Media(UserID, cl)
     mediaList = []
     for media in UserMedia:
-        print(media)
+        if media.location is None:
+            media.location = ""
+        if media.caption_text is None:
+            media.caption_text = ""
+
         data = client.put_item(
         TableName='media',
         Item={
@@ -90,7 +94,7 @@ def lambda_handler(event, context):
                 'S': '1'
             },
             'type': {
-                'S': media.media_type
+                'N': media.media_type
             },
             'location': {
                 'S': media.location
