@@ -21,7 +21,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         )
     if(user.is_private == False):
         return user.pk
-    else{
+    else:
         data = client.put_item(
         TableName='long-poll',
         Item={
@@ -33,7 +33,6 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
             }
         }
         )
-    }
 
 def Instagram_Get_User_Media(USER_ID, cl):
     try:
