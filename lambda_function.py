@@ -82,7 +82,7 @@ def lambda_handler(event, context):
         if media.location is None:
             media.location = ""
         else:
-            media.location = json.loads(vars(media.location))
+            media.location = json.dumps(vars(media.location))
         if media.caption_text is None:
             media.caption_text = ""
 
