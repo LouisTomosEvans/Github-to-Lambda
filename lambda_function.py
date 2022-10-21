@@ -78,39 +78,40 @@ def lambda_handler(event, context):
     UserID = Instagram_Get_User_Info(Search_Username, cl)
     UserMedia = Instagram_Get_User_Media(UserID, cl)
     mediaList = []
-    for media in UserMedia:
-        if media.location is None:
-            media.location = ""
-        else:
-            media.location = json.dumps(vars(media.location))
-        if media.caption_text is None:
-            media.caption_text = ""
-        if media.thumbnail_url is None:
-            media.thumbnail_url = ""
+    with table.batch_writer() as batch:
+        for media in UserMedia:
+            if media.location is None:
+                media.location = ""
+            else:
+                media.location = json.dumps(vars(media.location))
+            if media.caption_text is None:
+                media.caption_text = ""
+            if media.thumbnail_url is None:
+                media.thumbnail_url = ""
 
-        data = client.put_item(
-        TableName='media',
-        Item={
-            'id': {
-                'S': media.pk
-            },
-            'poll-id': {
-                'S': '1'
-            },
-            'type': {
-                'N': str(media.media_type)
-            },
-            'location': {
-                'S': media.location
-            },
-            'caption': {
-                'S': media.caption_text
-            },
-            'thumbnail': {
-                'S': media.thumbnail_url
+            data = batch.put_item(
+            TableName='media',
+            Item={
+                'id': {
+                    'S': media.pk
+                },
+                'poll-id': {
+                    'S': '1'
+                },
+                'type': {
+                    'N': str(media.media_type)
+                },
+                'location': {
+                    'S': media.location
+                },
+                'caption': {
+                    'S': media.caption_text
+                },
+                'thumbnail': {
+                    'S': media.thumbnail_url
+                }
             }
-        }
-        )
+            )
     
     data = client.put_item(
     TableName='long-poll',
