@@ -12,7 +12,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         TableName='long-poll',
         Item={
             'id': {
-                'S': retryID
+                'S': '1'
             },
             'response': {
                 'S': "Error: Couldn't get user info!"
@@ -26,7 +26,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         TableName='long-poll',
         Item={
             'id': {
-                'S': retryID
+                'S': '1'
             },
             'response': {
                 'S': 'Error: User is private!'
@@ -42,7 +42,7 @@ def Instagram_Get_User_Media(USER_ID, cl):
         TableName='long-poll',
         Item={
             'id': {
-                'S': retryID
+                'S': '1'
             },
             'response': {
                 'S': "Error: Couldn't get user's medias!"
@@ -79,7 +79,7 @@ def lambda_handler(event, context):
     TableName='long-poll',
     Item={
         'id': {
-            'S': retryID
+            'S': '1'
         },
         'response': {
             'S': json.dumps(mediaList, sort_keys=True, default=str)
