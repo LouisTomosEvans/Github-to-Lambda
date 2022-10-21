@@ -30,6 +30,9 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
             },
             'response': {
                 'S': 'Error: User is private!'
+            },
+            'Status': {
+                'S': "Error"
             }
         }
         )
@@ -46,6 +49,9 @@ def Instagram_Get_User_Media(USER_ID, cl):
             },
             'response': {
                 'S': "Error: Couldn't get user's medias!"
+            },
+            'Status': {
+                'S': "Error"
             }
         }
         )
@@ -73,7 +79,30 @@ def lambda_handler(event, context):
     UserMedia = Instagram_Get_User_Media(UserID, cl)
     mediaList = []
     for media in UserMedia:
-        mediaList.append(media.__dict__)
+        print(media)
+        data = client.put_item(
+        TableName='media',
+        Item={
+            'id': {
+                'S': media.pk
+            },
+            'poll-id': {
+                'S': '1'
+            },
+            'type': {
+                'S': media.media_type
+            },
+            'location': {
+                'S': media.location
+            },
+            'caption': {
+                'S': media.caption_text
+            },
+            'thumbnail': {
+                'S': media.thumbnail_url
+            }
+        }
+        )
     
     data = client.put_item(
     TableName='long-poll',
@@ -82,7 +111,10 @@ def lambda_handler(event, context):
             'S': '1'
         },
         'response': {
-            'S': json.dumps(mediaList, sort_keys=True, default=str)
+            'S': UserID
+        },
+        'Status': {
+            'S': "Completed"
         }
     }
     )
