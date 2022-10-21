@@ -78,7 +78,7 @@ def lambda_handler(event, context):
     UserID = Instagram_Get_User_Info(Search_Username, cl)
     UserMedia = Instagram_Get_User_Media(UserID, cl)
     mediaList = []
-    table = dynamodb.Table('media')
+    table = client.Table('media')
     with table.batch_writer() as batch:
         for media in UserMedia:
             if media.location is None:
