@@ -39,7 +39,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
 
 def Instagram_Get_User_Media(USER_ID, cl):
     try:
-        medias = cl.user_medias_v1(USER_ID)
+        medias = cl.user_medias_v1(USER_ID, 100)
     except:
         data = client.put_item(
         TableName='long-poll',
