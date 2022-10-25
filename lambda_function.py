@@ -4,7 +4,7 @@ from instagrapi import Client
 from instagrapi.types import StoryMention, StoryMedia, StoryLink, StoryHashtag
 import boto3
 
-def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
+def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
     try:
         user = cl.user_info_by_username(SEARCH_USERNAME)
     except:
@@ -12,7 +12,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         TableName='long-poll',
         Item={
             'id': {
-                'S': '1'
+                'S': retry_id
             },
             'response': {
                 'S': "Error: Couldn't get user info!"
@@ -26,7 +26,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         TableName='long-poll',
         Item={
             'id': {
-                'S': '1'
+                'S': retry_id
             },
             'response': {
                 'S': 'Error: User is private!'
@@ -37,7 +37,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl):
         }
         )
 
-def Instagram_Get_User_Media(USER_ID, cl, num_posts):
+def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
     try:
         medias = cl.user_medias_v1(USER_ID, int(num_posts))
     except:
@@ -45,7 +45,7 @@ def Instagram_Get_User_Media(USER_ID, cl, num_posts):
         TableName='long-poll',
         Item={
             'id': {
-                'S': '1'
+                'S': retry_id
             },
             'response': {
                 'S': "Error: Couldn't get user's medias!"
@@ -66,6 +66,7 @@ def lambda_handler(event, context):
     
     Search_Username = event['username']
     num_posts = event['num_posts']
+    retry_id = event['retry_id']
 
     ## Example Use Multi-Proxy
 
@@ -77,8 +78,8 @@ def lambda_handler(event, context):
     cl.login(IG_Username, IG_Password)
 
     ## Get Data
-    UserID = Instagram_Get_User_Info(Search_Username, cl)
-    UserMedia = Instagram_Get_User_Media(UserID, cl, num_posts)
+    UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
+    UserMedia = Instagram_Get_User_Media(UserID, cl, num_posts, retry_id)
     mediaList = []
     for media in UserMedia:
         if media.location is None:
@@ -97,7 +98,7 @@ def lambda_handler(event, context):
                 'S': media.pk
             },
             'poll-id': {
-                'S': '1'
+                'S': retry_id
             },
             'type': {
                 'N': str(media.media_type)
@@ -118,7 +119,7 @@ def lambda_handler(event, context):
     TableName='long-poll',
     Item={
         'id': {
-            'S': '1'
+            'S': retry_id
         },
         'UserID': {
             'S': UserID
