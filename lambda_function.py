@@ -1,4 +1,6 @@
+from cmath import log
 import datetime
+from distutils.log import Log
 import sys
 import json
 from instagrapi import Client
@@ -69,6 +71,7 @@ def get_user():
             }
         }
     )
+    print(data)
     if('Error' in data['Item']):
         get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
