@@ -42,7 +42,7 @@ def next_proxy():
         TableName='proxies',
         Key={
             'id': {
-                'S': random_id
+                'S': str(random_id)
             }
         }
     )
