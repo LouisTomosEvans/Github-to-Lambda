@@ -62,7 +62,7 @@ def get_proxy(id):
 
 def get_user():
     client = boto3.client('dynamodb')
-    random_id = random.randint(1, 11)
+    random_id = random.randint(1, 10)
     data = client.get_item(
         TableName='instagram_creds',
         Key={
