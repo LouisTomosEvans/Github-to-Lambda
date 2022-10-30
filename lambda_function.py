@@ -187,6 +187,7 @@ def change_password_handler(username):
     return password
 
 def handle_exception(client, e):
+        client = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
             client.set_proxy(next_proxy())
