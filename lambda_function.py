@@ -1,5 +1,5 @@
 from cmath import log
-import datetime
+from datetime import datetime, timedelta
 from distutils.log import Log
 import sys
 import json
@@ -78,7 +78,7 @@ def get_user():
         # delete error and date
         #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
     else:
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
+        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
@@ -232,7 +232,13 @@ def handle_exception(client, e):
                 """
                 self.freeze(message)
         elif isinstance(e, PleaseWaitFewMinutes):
-            self.freeze(str(e), hours=1)
+            userObj = userObj['Item']
+            userObj['Error'] = str(e)
+            userObj['date'] = str(datetime.now() + timedelta(hours=1))
+            data = client.put_item(
+                TableName='instagram_creds',
+                item=[userObj]
+            )
         raise e
 
 
@@ -240,6 +246,7 @@ def lambda_handler(event, context):
 
     global Email_Username
     global Email_Password
+    global userObj
 
     ## Example Use Multi-Account (Max 100 requests a day to be safe)
     
@@ -259,6 +266,7 @@ def lambda_handler(event, context):
     Email_Username = user[2]
     Email_Password = user[3]
     Preferred_Proxy = user[4]
+    userObj = user[5]
 
     ## Login
     cl = Client(proxy=get_proxy(Preferred_Proxy))
