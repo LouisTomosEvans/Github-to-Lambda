@@ -298,7 +298,7 @@ def lambda_handler(event, context):
 
     ##
     userItem = userObj['Item']
-    userItem['Usage'] = str(int(userItem['Usage']) + 1)
+    userItem['Usage'] = str(int(userItem['Usage']['S']) + 1)
     data = dynamoclient.put_item(
         TableName='instagram_creds',
         Item=userItem
