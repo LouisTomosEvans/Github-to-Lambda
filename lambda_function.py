@@ -85,7 +85,8 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
     try:
         user = cl.user_info_by_username(SEARCH_USERNAME)
     except:
-        data = cl.put_item(
+        client = boto3.client('dynamodb')
+        data = client.put_item(
         TableName='long-poll',
         Item={
             'id': {
@@ -99,7 +100,8 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
     if(user.is_private == False):
         return user.pk
     else:
-        data = cl.put_item(
+        client = boto3.client('dynamodb')
+        data = client.put_item(
         TableName='long-poll',
         Item={
             'id': {
@@ -118,7 +120,8 @@ def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
     try:
         medias = cl.user_medias_v1(USER_ID, int(num_posts))
     except:
-        data = cl.put_item(
+        client = boto3.client('dynamodb')
+        data = client.put_item(
         TableName='long-poll',
         Item={
             'id': {
