@@ -226,7 +226,7 @@ def handle_exception(client, e):
                 except (ChallengeRequired, SelectContactPointRecoveryForm, RecaptchaChallengeForm) as e:
                     on_error(e, 4*24*60)
                     raise e
-                client.update_client_settings(client.get_settings())
+                #client.update_client_settings(client.get_settings())
                 return True
         elif isinstance(e, FeedbackRequired):
             message = client.last_json["feedback_message"]
