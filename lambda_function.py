@@ -72,7 +72,7 @@ def get_user():
         }
     )
     print(data)
-    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Gapp_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
     #if(data['Item']['Error'] = ""):
         #return get_user()
