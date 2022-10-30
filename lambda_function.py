@@ -232,12 +232,12 @@ def handle_exception(client, e):
                 """
                 self.freeze(message)
         elif isinstance(e, PleaseWaitFewMinutes):
-            userObj = userObj['Item']
-            userObj['Error'] = str(e)
-            userObj['date'] = str(datetime.now() + timedelta(hours=1))
+            userItem = userObj['Item']
+            userItem['Error'] = str(e)
+            userItem['date'] = str(datetime.now() + timedelta(hours=1))
             data = client.put_item(
                 TableName='instagram_creds',
-                item=[userObj]
+                item=[userItem]
             )
         raise e
 
