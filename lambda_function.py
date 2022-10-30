@@ -189,6 +189,7 @@ def change_password_handler(username):
     return password
 
 def on_error(e, time):
+    dynamoclient = boto3.client('dynamodb')
     userItem = userObj['Item']
     userItem['Error'] = {'S': str(e)}
     userItem['date'] = {'S': str(datetime.now() + timedelta(minutes=time))}
