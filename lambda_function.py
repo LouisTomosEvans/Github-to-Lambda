@@ -62,7 +62,7 @@ def get_proxy(id):
 
 def get_user():
     dynamoclient = boto3.client('dynamodb')
-    random_id = random.randint(1, 10)
+    random_id = random.randint(1, 9)
     data = dynamoclient.get_item(
         TableName='instagram_creds',
         Key={
@@ -72,7 +72,7 @@ def get_user():
         }
     )
     print(data)
-    if('Error' in data['Item']):
+    if(data['Item']['Error'] == ""):
         return get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
