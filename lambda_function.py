@@ -187,7 +187,7 @@ def change_password_handler(username):
     return password
 
 def handle_exception(client, e):
-        client = boto3.client('dynamodb')
+        dynamoclient = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
             client.set_proxy(next_proxy())
@@ -236,7 +236,7 @@ def handle_exception(client, e):
             userItem = userObj['Item']
             userItem['Error'] = {'S': str(e)}
             userItem['date'] = {'S': str(datetime.now() + timedelta(hours=1))}
-            data = client.put_item(
+            data = dynamoclient.put_item(
                 TableName='instagram_creds',
                 Item=userItem
             )
