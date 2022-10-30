@@ -72,13 +72,13 @@ def get_user():
         }
     )
     print(data)
-    if(data['Item']['Error'] == ""):
+    if(data['Item']['Error'] != "" or data['Item']['gapp_password'] == ""):
         return get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
         #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
     else:
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
@@ -186,61 +186,64 @@ def change_password_handler(username):
     password = "".join(random.sample(chars, 10))
     return password
 
+def on_error(e, time):
+    userItem = userObj['Item']
+    userItem['Error'] = {'S': str(e)}
+    userItem['date'] = {'S': str(datetime.now() + timedelta(minutes=time))}
+    data = dynamoclient.put_item(
+        TableName='instagram_creds',
+        Item=userItem
+    )
+
+
 def handle_exception(client, e):
         dynamoclient = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
             client.set_proxy(next_proxy())
             if client.relogin_attempt > 0:
-                self.freeze(str(e), days=7)
+                on_error(e, 7*24*60)
                 raise ReloginAttemptExceeded(e)
-            client.settings = self.rebuild_client_settings()
-            return self.update_client_settings(client.get_settings())
+            return client.update_client_settings(client.get_settings())
         elif isinstance(e, LoginRequired):
             client.logger.exception(e)
             client.relogin()
-            return self.update_client_settings(client.get_settings())
+            return client.update_client_settings(client.get_settings())
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
                 client.set_proxy(next_proxy())
-                client.settings = self.rebuild_client_settings()
+                client.settings = client.rebuild_client_settings()
             else:
                 try:
                     client.challenge_resolve(client.last_json)
                 except ChallengeRequired as e:
-                    self.freeze('Manual Challenge Required', days=2)
+                    on_error(e, 2*24*60)
                     raise e
                 except (ChallengeRequired, SelectContactPointRecoveryForm, RecaptchaChallengeForm) as e:
-                    self.freeze(str(e), days=4)
+                    on_error(e, 4*24*60)
                     raise e
-                self.update_client_settings(client.get_settings())
+                client.update_client_settings(client.get_settings())
                 return True
         elif isinstance(e, FeedbackRequired):
             message = client.last_json["feedback_message"]
             if "This action was blocked. Please try again later" in message:
-                self.freeze(message, hours=12)
+                on_error(e, 12*60)
             # client.settings = self.rebuild_client_settings()
             # return self.update_client_settings(client.get_settings())
             elif "We restrict certain activity to protect our community" in message:
                 # 6 hours is not enough
-                self.freeze(message, hours=12)
+                on_error(e, 7*12*60)
             elif "Your account has been temporarily blocked" in message:
                 """
                     Based on previous use of this feature, your account has been temporarily
                     blocked from taking this action.
                     This block will expire on 2020-03-27.
                 """
-                self.freeze(message)
+                on_error(e, )
         elif isinstance(e, PleaseWaitFewMinutes):
-            userItem = userObj['Item']
-            userItem['Error'] = {'S': str(e)}
-            userItem['date'] = {'S': str(datetime.now() + timedelta(hours=1))}
-            data = dynamoclient.put_item(
-                TableName='instagram_creds',
-                Item=userItem
-            )
-        raise e
+            on_error(e, 25)
+        on_error(e, 365*24*60)
 
 
 def lambda_handler(event, context):
@@ -289,6 +292,14 @@ def lambda_handler(event, context):
     except (ClientLoginRequired, PleaseWaitFewMinutes, ClientForbiddenError):
         # Logical level
         cl.set_proxy(next_proxy())
+
+    ##
+    userItem = userObj['Item']
+    userItem['Usage'] = str(int(userItem['Usage']) + 1)
+    data = dynamoclient.put_item(
+        TableName='instagram_creds',
+        Item=userItem
+    )
 
     ## Get Data
     UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
