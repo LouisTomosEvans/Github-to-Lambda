@@ -36,9 +36,9 @@ from instagrapi.mixins.challenge import ChallengeChoice
 
 
 def next_proxy():
-    client = boto3.client('dynamodb')
+    dynamoclient = boto3.client('dynamodb')
     random_id = random.randint(1, 11)
-    data = client.get_item(
+    data = dynamoclient.get_item(
         TableName='proxies',
         Key={
             'id': {
@@ -49,8 +49,8 @@ def next_proxy():
     return data['Item']['proxy_url']['S']
     
 def get_proxy(id):
-    client = boto3.client('dynamodb')
-    data = client.get_item(
+    dynamoclient = boto3.client('dynamodb')
+    data = dynamoclient.get_item(
         TableName='proxies',
         Key={
             'id': {
@@ -61,9 +61,9 @@ def get_proxy(id):
     return data['Item']['proxy_url']['S']
 
 def get_user():
-    client = boto3.client('dynamodb')
+    dynamoclient = boto3.client('dynamodb')
     random_id = random.randint(1, 10)
-    data = client.get_item(
+    data = dynamoclient.get_item(
         TableName='instagram_creds',
         Key={
             'id': {
@@ -85,8 +85,8 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
     try:
         user = cl.user_info_by_username(SEARCH_USERNAME)
     except:
-        client = boto3.client('dynamodb')
-        data = client.put_item(
+        dynamoclient = boto3.client('dynamodb')
+        data = dynamoclient.put_item(
         TableName='long-poll',
         Item={
             'id': {
@@ -101,8 +101,8 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
     if(user.is_private == False):
         return user.pk
     else:
-        client = boto3.client('dynamodb')
-        data = client.put_item(
+        dynamoclient = boto3.client('dynamodb')
+        data = dynamoclient.put_item(
         TableName='long-poll',
         Item={
             'id': {
@@ -121,8 +121,8 @@ def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
     try:
         medias = cl.user_medias_v1(USER_ID, int(num_posts))
     except:
-        client = boto3.client('dynamodb')
-        data = client.put_item(
+        dynamoclient = boto3.client('dynamodb')
+        data = dynamoclient.put_item(
         TableName='long-poll',
         Item={
             'id': {
@@ -258,7 +258,7 @@ def lambda_handler(event, context):
     ## Example Use Multi-Proxy
 
     ## Create dynamoDB
-    client = boto3.client('dynamodb')
+    dynamoclient = boto3.client('dynamodb')
 
     ## Get User
     user = get_user()
@@ -304,7 +304,7 @@ def lambda_handler(event, context):
         if media.thumbnail_url is None:
             media.thumbnail_url = ""
 
-        data = client.put_item(
+        data = dynamoclient.put_item(
         TableName='media',
         Item={
             'id': {
@@ -328,7 +328,7 @@ def lambda_handler(event, context):
         }
         )
     
-    data = client.put_item(
+    data = dynamoclient.put_item(
     TableName='long-poll',
     Item={
         'id': {
