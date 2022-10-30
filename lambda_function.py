@@ -67,7 +67,7 @@ def get_user():
         TableName='instagram_creds',
         Key={
             'id': {
-                'S': str(1)
+                'S': str(3)
             }
         }
     )
