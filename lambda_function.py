@@ -69,13 +69,13 @@ def get_user():
             }
         }
     )
-    if(data['Item']['Error']['S'] is None):
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
-    elif(data['Item']['date']['S'] < datetime.now()):
-        # delete error and date
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
-    else:
+    if('Error' in data['Item']):
         get_user()
+    #elif(data['Item']['date']['S'] < datetime.now()):
+        # delete error and date
+        #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
+    else:
+        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
