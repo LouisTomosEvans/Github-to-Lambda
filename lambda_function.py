@@ -54,7 +54,7 @@ def get_proxy(id):
         TableName='proxies',
         Key={
             'id': {
-                'S': id
+                'S': str(id)
             }
         }
     )
@@ -73,7 +73,7 @@ def get_user():
     )
     print(data)
     if('Error' in data['Item']):
-        get_user()
+        return get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
         #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
