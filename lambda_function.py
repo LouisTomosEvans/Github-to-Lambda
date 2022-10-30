@@ -97,6 +97,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
             }
         }
         )
+        raise
     if(user.is_private == False):
         return user.pk
     else:
@@ -261,6 +262,9 @@ def lambda_handler(event, context):
 
     ## Login
     cl = Client(proxy=get_proxy(Preferred_Proxy))
+    cl.set_locale('en_US')
+    cl.set_timezone_offset(-7 * 60 * 60)  # Los Angeles UTC (GMT) -7 hours == -25200 seconds
+    cl.get_settings()
 
     cl.handle_exception = handle_exception
     cl.challenge_code_handler = challenge_code_handler
