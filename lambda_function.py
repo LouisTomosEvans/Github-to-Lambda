@@ -246,7 +246,7 @@ def lambda_handler(event, context):
     client = boto3.client('dynamodb')
 
     ## Get User
-    user = get_user(client)
+    user = get_user()
     IG_Username = user[0]
     IG_Password = user[1]
     Email_Username = user[2]
@@ -254,7 +254,7 @@ def lambda_handler(event, context):
     Preferred_Proxy = user[4]
 
     ## Login
-    cl = Client(proxy=get_proxy(client, Preferred_Proxy))
+    cl = Client(proxy=get_proxy(Preferred_Proxy))
 
     cl.handle_exception = handle_exception
     cl.challenge_code_handler = challenge_code_handler
@@ -263,13 +263,13 @@ def lambda_handler(event, context):
         cl.login(IG_Username, IG_Password)
     except (ProxyError, HTTPError, GenericRequestError, ClientConnectionError):
         # Network level
-        cl.set_proxy(next_proxy(client))
+        cl.set_proxy(next_proxy())
     except (SentryBlock, RateLimitError, ClientThrottledError):
         # Instagram limit level
-        cl.set_proxy(next_proxy(client))
+        cl.set_proxy(next_proxy())
     except (ClientLoginRequired, PleaseWaitFewMinutes, ClientForbiddenError):
         # Logical level
-        cl.set_proxy(next_proxy(client))
+        cl.set_proxy(next_proxy())
 
     ## Get Data
     UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
