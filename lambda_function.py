@@ -72,7 +72,7 @@ def get_user():
         }
     )
     print(data)
-    if(data['Item']['Error'] != "" or data['Item']['gapp_password'] == ""):
+    if(data['Item']['Error'] != "" or data['Item']['Gapp_Password'] == ""):
         return get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
