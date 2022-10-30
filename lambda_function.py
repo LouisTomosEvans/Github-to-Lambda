@@ -67,18 +67,20 @@ def get_user():
         TableName='instagram_creds',
         Key={
             'id': {
-                'S': str(random_id)
+                'S': str(3)
             }
         }
     )
     print(data)
-    if(data['Item']['Error'] != "" or data['Item']['Gapp_Password'] == ""):
-        return get_user()
+    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+
+    #if(data['Item']['Error'] = ""):
+        #return get_user()
     #elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
         #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
-    else:
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+    #else:
+        #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
