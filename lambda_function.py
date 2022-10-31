@@ -274,6 +274,7 @@ def lambda_handler(event, context):
     Email_Password = user[3]
     Preferred_Proxy = user[4]
     userObj = user[5]
+    set_settings = True
 
     ## Login
     cl = Client(proxy=get_proxy(Preferred_Proxy))
@@ -285,10 +286,11 @@ def lambda_handler(event, context):
     cl.challenge_code_handler = challenge_code_handler
 
     userItem = userObj['Item']
+
     if userItem['Settings']['S'] == "":
+        set_settings = False
         userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
-    else:
-        cl.set_settings(json.loads(userItem['Settings']['S']))
+
 
     try:
         cl.login(IG_Username, IG_Password)
@@ -301,6 +303,10 @@ def lambda_handler(event, context):
     except (ClientLoginRequired, PleaseWaitFewMinutes, ClientForbiddenError):
         # Logical level
         cl.set_proxy(next_proxy())
+
+    
+    if set_settings == True:
+        cl.set_settings(json.loads(userItem['Settings']['S']))
     
     print(cl.get_settings())
 
