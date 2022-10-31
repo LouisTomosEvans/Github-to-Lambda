@@ -73,11 +73,10 @@ def get_user():
     )
     print(data)
 
-    datetimeObj = datetime.strptime(data['Item']['date']['S'], '%Y-%m-%d %H:%M:%S')
-
     if(data['Item']['Error']['S'] != ""):
         return get_user()
-    elif(datetimeObj != ""):
+    elif(data['Item']['date']['S'] != ""):
+        datetimeObj = datetime.strptime(data['Item']['date']['S'], '%Y-%m-%d %H:%M:%S')
         if(datetimeObj < datetime.now()):
             # delete error and date
             item = data['Item']
