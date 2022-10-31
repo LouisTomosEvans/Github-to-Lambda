@@ -62,17 +62,17 @@ def get_proxy(id):
 
 def get_user():
     dynamoclient = boto3.client('dynamodb')
-    random_id = random.randint(1, 9)
+    random_id = random.randint(10, 13)
     data = dynamoclient.get_item(
         TableName='instagram_creds',
         Key={
             'id': {
-                'S': str(1)
+                'S': str(random_id)
             }
         }
     )
     print(data)
-    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Gapp_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
     #if(data['Item']['Error'] = ""):
         #return get_user()
@@ -141,7 +141,7 @@ def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
     return medias
 
 def get_code_from_email(username):
-    mail = imaplib.IMAP4_SSL("imap.gmail.com")
+    mail = imaplib.IMAP4_SSL("imap.outlook.com")
     mail.login(Email_Username, Email_Password)
     mail.select("inbox")
     result, data = mail.search(None, "(UNSEEN)")
