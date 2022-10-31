@@ -279,7 +279,7 @@ def lambda_handler(event, context):
     cl = Client(proxy=get_proxy(Preferred_Proxy))
     cl.set_locale('en_US')
     cl.set_timezone_offset(-7 * 60 * 60)  # Los Angeles UTC (GMT) -7 hours == -25200 seconds
-    print(cl.get_settings())
+    cl.get_settings()
 
     cl.handle_exception = handle_exception
     cl.challenge_code_handler = challenge_code_handler
@@ -298,7 +298,7 @@ def lambda_handler(event, context):
 
     ##
     userItem = userObj['Item']
-    userItem['Usage']['N'] = int(userItem['Usage']['N']) + 1
+    userItem['Usage']['N'] = str(int(userItem['Usage']['N']) + 1)
     data = dynamoclient.put_item(
         TableName='instagram_creds',
         Item=userItem
