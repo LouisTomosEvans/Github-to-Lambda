@@ -288,7 +288,7 @@ def lambda_handler(event, context):
     if userItem['Settings']['S'] == "":
         userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
     else:
-        cl.load_settings(userItem['settings']['S'])
+        cl.load_settings(userItem['Settings']['S'])
 
     try:
         cl.login(IG_Username, IG_Password)
