@@ -286,7 +286,7 @@ def lambda_handler(event, context):
 
     userItem = userObj['Item']
     if userItem['Settings']['S'] == "":
-        userItem['Settings']['S'] - json.dumps(cl.get_settings(), indent = 4) 
+        userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
     else:
         cl.load_settings(userItem['settings']['S'])
 
