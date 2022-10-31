@@ -279,10 +279,16 @@ def lambda_handler(event, context):
     cl = Client(proxy=get_proxy(Preferred_Proxy))
     cl.set_locale('en_US')
     cl.set_timezone_offset(-7 * 60 * 60)  # Los Angeles UTC (GMT) -7 hours == -25200 seconds
-    cl.get_settings()
+    print(cl.get_settings())
 
     cl.handle_exception = handle_exception
     cl.challenge_code_handler = challenge_code_handler
+
+    userItem = userObj['Item']
+    if userItem['Settings']['S'] == "":
+        userItem['Settings']['S'] - json.dumps(cl.get_settings(), indent = 4) 
+    else:
+        cl.load_settings(userItem['settings']['S'])
 
     try:
         cl.login(IG_Username, IG_Password)
@@ -295,6 +301,8 @@ def lambda_handler(event, context):
     except (ClientLoginRequired, PleaseWaitFewMinutes, ClientForbiddenError):
         # Logical level
         cl.set_proxy(next_proxy())
+    
+    print(cl.get_settings())
 
     ##
     userItem = userObj['Item']
