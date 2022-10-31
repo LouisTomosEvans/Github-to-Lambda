@@ -73,20 +73,25 @@ def get_user():
     )
     print(data)
 
+    datetimeObj = datetime.strptime(data['Item']['date']['S'], '%Y-%m-%d %H:%M:%S')
+
     if(data['Item']['Error']['S'] != ""):
         return get_user()
-    elif(datetime.strptime(data['Item']['date']['S'], '%Y-%m-%d %H:%M:%S') < datetime.now()):
-        # delete error and date
-        item = data['Item']
-        data['Item']['Error']['S'] == ""
-        data['Item']['date']['S'] == ""
-        data = dynamoclient.put_item(
-            TableName='instagram_creds',
-            Item={item}
-        )
-        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
+    elif(datetimeObj != ""):
+        if(datetimeObj < datetime.now()):
+            # delete error and date
+            item = data['Item']
+            data['Item']['Error']['S'] == ""
+            data['Item']['date']['S'] == ""
+            data = dynamoclient.put_item(
+                TableName='instagram_creds',
+                Item={item}
+            )
+            return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+        else:
+            return get_user()
     else:
-        [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
