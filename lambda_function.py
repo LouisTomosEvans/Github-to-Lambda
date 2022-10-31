@@ -72,15 +72,21 @@ def get_user():
         }
     )
     print(data)
-    return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
-    #if(data['Item']['Error'] = ""):
-        #return get_user()
-    #elif(data['Item']['date']['S'] < datetime.now()):
+    if(data['Item']['Error']['S'] != ""):
+        return get_user()
+    elif(data['Item']['date']['S'] < datetime.now()):
         # delete error and date
-        #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
-    #else:
-        #return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['gapp_password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+        item = data['Item']
+        data['Item']['Error']['S'] == ""
+        data['Item']['date']['S'] == ""
+        data = dynamoclient.put_item(
+            TableName='instagram_creds',
+            Item={item}
+        )
+        return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S']]
+    else:
+        [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
@@ -246,7 +252,7 @@ def handle_exception(client, e):
                 on_error(e, )
         elif isinstance(e, PleaseWaitFewMinutes):
             on_error(e, 25)
-        on_error(e, 365*24*60)
+        on_error(e, 36500*24*60)
 
 
 def lambda_handler(event, context):
