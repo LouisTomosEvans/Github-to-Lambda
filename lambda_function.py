@@ -217,11 +217,9 @@ def handle_exception(client, e):
             if client.relogin_attempt > 0:
                 on_error(e, 7*24*60)
                 raise ReloginAttemptExceeded(e)
-            return client.update_client_settings(client.get_settings())
         elif isinstance(e, LoginRequired):
             client.logger.exception(e)
             client.relogin()
-            return client.update_client_settings(client.get_settings())
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
