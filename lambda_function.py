@@ -301,8 +301,9 @@ def lambda_handler(event, context):
 
     if userItem['Settings']['S'] == "":
         set_settings = False
-        userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
 
+    if set_settings == True:
+        cl.set_settings(json.loads(userItem['Settings']['S']))
 
     try:
         cl.login(IG_Username, IG_Password)
@@ -316,10 +317,9 @@ def lambda_handler(event, context):
         # Logical level
         cl.set_proxy(next_proxy())
 
-    
-    if set_settings == True:
-        cl.set_settings(json.loads(userItem['Settings']['S']))
-    
+    if set_settings == False:
+        userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
+        
     print(cl.get_settings())
 
     ## Get Data
