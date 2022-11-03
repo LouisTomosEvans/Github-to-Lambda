@@ -220,6 +220,7 @@ def handle_exception(client, e):
         elif isinstance(e, LoginRequired):
             client.logger.exception(e)
             client.relogin()
+            userObj['Item']['Settings']['S'] = json.dumps(client.get_settings(), indent = 4) 
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
@@ -318,6 +319,10 @@ def lambda_handler(event, context):
     
     print(cl.get_settings())
 
+    ## Get Data
+    UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
+    UserMedia = Instagram_Get_User_Media(UserID, cl, num_posts, retry_id)
+
     ##
     userItem = userObj['Item']
     userItem['Usage']['N'] = str(int(userItem['Usage']['N']) + 1)
@@ -325,10 +330,7 @@ def lambda_handler(event, context):
         TableName='instagram_creds',
         Item=userItem
     )
-
-    ## Get Data
-    UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
-    UserMedia = Instagram_Get_User_Media(UserID, cl, num_posts, retry_id)
+                                                                                                                                
     mediaList = []
     for media in UserMedia:
         if media.location is None:
