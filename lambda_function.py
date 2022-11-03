@@ -219,6 +219,7 @@ def handle_exception(client, e):
             client.logger.exception(e)
             client.relogin()
             userObj['Item']['Settings']['S'] = json.dumps(client.get_settings(), indent = 4) 
+            return
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
