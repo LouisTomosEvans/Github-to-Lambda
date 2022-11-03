@@ -80,11 +80,11 @@ def get_user():
             item = data['Item']
             data['Item']['Error']['S'] == ""
             data['Item']['date']['S'] == ""
-            data = dynamoclient.put_item(
+            res = dynamoclient.put_item(
                 TableName='instagram_creds',
                 Item=item
             )
-            return [data['Item']['IG_Username']['S'], data['Item']['IG_Password']['S'], data['Item']['Email_Username']['S'], data['Item']['Email_Password']['S'], data['Item']['Preferred_Proxy']['S'], data]
+            return [item['IG_Username']['S'], item['IG_Password']['S'], item['Email_Username']['S'], item['Email_Password']['S'], item['Preferred_Proxy']['S'], data]
         else:
             return get_user()
     else:
