@@ -241,11 +241,13 @@ def handle_exception(client, e):
             message = client.last_json["feedback_message"]
             if "This action was blocked. Please try again later" in message:
                 on_error(e, 12*60)
+                return
             # client.settings = self.rebuild_client_settings()
             # return self.update_client_settings(client.get_settings())
             elif "We restrict certain activity to protect our community" in message:
                 # 6 hours is not enough
                 on_error(e, 7*12*60)
+                return
             elif "Your account has been temporarily blocked" in message:
                 """
                     Based on previous use of this feature, your account has been temporarily
@@ -253,8 +255,10 @@ def handle_exception(client, e):
                     This block will expire on 2020-03-27.
                 """
                 on_error(e, )
+                return
         elif isinstance(e, PleaseWaitFewMinutes):
             on_error(e, 25)
+            return
         on_error(e, 36500*24*60)
 
 
