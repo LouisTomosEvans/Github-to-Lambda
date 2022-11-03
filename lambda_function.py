@@ -224,7 +224,8 @@ def handle_exception(client, e):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
                 client.set_proxy(next_proxy())
-                client.settings = client.rebuild_client_settings()
+                #client.settings = client.rebuild_client_settings()
+                return
             else:
                 try:
                     client.challenge_resolve(client.last_json)
@@ -316,6 +317,11 @@ def lambda_handler(event, context):
     except (ClientLoginRequired, PleaseWaitFewMinutes, ClientForbiddenError):
         # Logical level
         cl.set_proxy(next_proxy())
+
+    try:
+        cl.account_info()
+    except LoginRequired:
+        cl.relogin() # Use clean session
 
     userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
 
