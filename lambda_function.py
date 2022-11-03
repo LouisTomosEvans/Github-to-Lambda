@@ -317,10 +317,7 @@ def lambda_handler(event, context):
         # Logical level
         cl.set_proxy(next_proxy())
 
-    if set_settings == False:
-        userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
-        
-    print(cl.get_settings())
+    userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
 
     ## Get Data
     UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
