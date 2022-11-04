@@ -38,7 +38,7 @@ def rebuild_client_settings(self, device=None):
     self.set_settings(client_settings)
     self.login(relogin=True)
     userItem = userObj['Item']
-    userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4)
+    userItem['Settings']['S'] = json.dumps(self.get_settings(), indent = 4)
     dynamoclient = boto3.client('dynamodb')
     dynamoclient.put_item(
         TableName='instagram_creds',
@@ -48,11 +48,10 @@ def rebuild_client_settings(self, device=None):
 
 def build_client_settings(self, device=None):
     client_settings = self.get_settings()
-    if not device:
-        random_id = random.randint(1, 11)
-        deviceObj = device_array[0]
+    deviceObj = device_array[0]
+    uaStr = user_agent_array[0]
     client_settings["device_settings"] = deviceObj
-    client_settings["user_agent"] = user_agent_array[0]
+    client_settings["user_agent"] = uaStr
     return client_settings
 
 def update_client_settings(self, settings):
@@ -298,18 +297,18 @@ def lambda_handler(event, context):
     global user_agent_array
 
     device_array = [{
-        "android_release": "8.1.0",
-        "android_version": 27,
-        "app_version": "194.0.0.36.172",
-        "cpu": "armeabi-v7a",
-        "device": "j7popeltetmo",
-        "dpi": "280dpi",
-        "manufacturer": "samsung",
-        "model": "SM-J727T",
-        "resolution": "720x1280",
-        "version_code": "301484483"
+      "cpu": "h1",
+      "dpi": "640dpi",
+      "model": "h1",
+      "device": "RS988",
+      "resolution": "1440x2392",
+      "app_version": "117.0.0.28.123",
+      "manufacturer": "LGE/lge",
+      "version_code": "168361634",
+      "android_release": "6.0.1",
+      "android_version": 23
     }]
-    user_agent_array = ["Instagram 194.0.0.36.172 Android (26/8.1.0; 280dpi; 720x1280; samsung; SM-J727T; j7popeltetmo; armeabi-v7a; en_US; 301484483)"]
+    user_agent_array = ["Instagram 117.0.0.28.123 Android (23/6.0.1; 640dpi; 1440x2392; LGE/lge; h1; RS988; h1; en_US; 168361634)"]
 
     ## Example Use Multi-Account (Max 100 requests a day to be safe)
     
