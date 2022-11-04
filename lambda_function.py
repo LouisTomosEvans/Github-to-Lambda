@@ -36,7 +36,7 @@ def rebuild_client_settings(self, device=None):
     self.set_locale('en_US')
     self.set_timezone_offset(-7 * 60 * 60)
     self.set_settings(client_settings)
-    self.relogin(IG_Username, IG_Password)
+    self.relogin()
     print(self.get_settings())
     userItem = userObj['Item']
     userItem['Settings']['S'] = json.dumps(self.get_settings(), indent = 4)
@@ -366,7 +366,7 @@ def lambda_handler(event, context):
     try:
         cl.account_info()
     except LoginRequired:
-        cl.relogin(IG_Username, IG_Password) # Use clean session
+        cl.relogin() # Use clean session
 
     userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
 
