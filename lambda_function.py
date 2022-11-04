@@ -57,8 +57,7 @@ def build_client_settings(self, device=None):
     return client_settings
 
 def update_client_settings(self, settings):
-    self.client_settings = settings
-    self.save(update_fields=["client_settings"])
+    self.set_settings(settings)
     return True
 
 
