@@ -1,8 +1,4 @@
-from cmath import log
 from datetime import datetime, timedelta
-from distutils.log import Log
-from msilib.schema import SelfReg
-import sys
 import json
 from instagrapi import Client
 import boto3
