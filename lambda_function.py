@@ -34,6 +34,27 @@ from instagrapi.exceptions import (
 
 from instagrapi.mixins.challenge import ChallengeChoice
 
+def rebuild_client_settings(self, device=None):
+    self.client_settings = {}
+    self.build_client_settings(device)
+    self.login(relogin=True)
+    return self.client_settings
+
+def build_client_settings(self, device=None):
+    self.device = device
+    if not self.device:
+        self.device = Device.objects.order_by('?').first()
+    self.client_settings["device_settings"] = self.device.settings
+    self.client_settings["user_agent"] = self.device_build_user_agent(self.locale or self.proxy.locale)
+    self.save(update_fields=["device", "client_settings"])
+
+def update_client_settings(self, settings):
+    self.client_settings = settings
+    self.save(update_fields=["client_settings"])
+    return True
+
+
+
 
 def next_proxy():
     dynamoclient = boto3.client('dynamodb')
@@ -224,8 +245,7 @@ def handle_exception(client, e):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
                 client.set_proxy(next_proxy())
-                #client.settings = client.rebuild_client_settings()
-                return
+                client.settings = rebuild_client_settings(client)
             else:
                 try:
                     client.challenge_resolve(client.last_json)
@@ -235,7 +255,7 @@ def handle_exception(client, e):
                 except (ChallengeRequired, SelectContactPointRecoveryForm, RecaptchaChallengeForm) as e:
                     on_error(e, 4*24*60)
                     raise e
-                #client.update_client_settings(client.get_settings())
+                update_client_settings(client, client.get_settings())
                 return True
         elif isinstance(e, FeedbackRequired):
             message = client.last_json["feedback_message"]
