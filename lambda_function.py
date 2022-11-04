@@ -50,11 +50,10 @@ def build_client_settings(self, device=None):
     client_settings = self.get_settings()
     if not device:
         random_id = random.randint(1, 11)
-        deviceObj = device[random_id]
-    else:
-        deviceObj = device[device]
-    client_settings["device_settings"] = deviceObj.settings
-    client_settings["user_agent"] = self.device_build_user_agent('us')
+        deviceObj = device_array[0]
+    self.device(deviceObj)
+    client_settings["device_settings"] = deviceObj
+    client_settings["user_agent"] = user_agent_array[0]
     return client_settings
 
 def update_client_settings(self, settings):
@@ -296,6 +295,22 @@ def lambda_handler(event, context):
     global Email_Username
     global Email_Password
     global userObj
+    global device_array
+    global user_agent_array
+
+    device_array = [{
+        "android_release": "8.1.0",
+        "android_version": 27,
+        "app_version": "194.0.0.36.172",
+        "cpu": "armeabi-v7a",
+        "device": "j7popeltetmo",
+        "dpi": "280dpi",
+        "manufacturer": "samsung",
+        "model": "SM-J727T",
+        "resolution": "720x1280",
+        "version_code": "301484483"
+    }]
+    user_agent_array = ["Instagram 194.0.0.36.172 Android (26/8.1.0; 280dpi; 720x1280; samsung; SM-J727T; j7popeltetmo; armeabi-v7a; en_US; 301484483)"]
 
     ## Example Use Multi-Account (Max 100 requests a day to be safe)
     
