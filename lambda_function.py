@@ -1,6 +1,7 @@
 from cmath import log
 from datetime import datetime, timedelta
 from distutils.log import Log
+from msilib.schema import SelfReg
 import sys
 import json
 from instagrapi import Client
@@ -31,22 +32,34 @@ from instagrapi.exceptions import (
     ReloginAttemptExceeded,
     SelectContactPointRecoveryForm,
 )
-
 from instagrapi.mixins.challenge import ChallengeChoice
 
+
 def rebuild_client_settings(self, device=None):
-    self.client_settings = {}
-    build_client_settings(self, device)
+    client_settings = build_client_settings(self, device)
+    self.set_locale('en_US')
+    self.set_timezone_offset(-7 * 60 * 60)
+    self.set_settings(client_settings)
     self.login(relogin=True)
+    userItem = userObj['Item']
+    userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4)
+    dynamoclient = boto3.client('dynamodb')
+    dynamoclient.put_item(
+        TableName='instagram_creds',
+        Item=userItem
+    )
     return self.client_settings
 
 def build_client_settings(self, device=None):
-    self.device = device
-    if not self.device:
-        self.device = Device.objects.order_by('?').first()
-    self.client_settings["device_settings"] = self.device.settings
-    self.client_settings["user_agent"] = self.device_build_user_agent(self.locale or self.proxy.locale)
-    self.save(update_fields=["device", "client_settings"])
+    client_settings = self.get_settings()
+    if not device:
+        random_id = random.randint(1, 11)
+        deviceObj = device[random_id]
+    else:
+        deviceObj = device[device]
+    client_settings["device_settings"] = deviceObj.settings
+    client_settings["user_agent"] = self.device_build_user_agent('us')
+    return client_settings
 
 def update_client_settings(self, settings):
     self.client_settings = settings
