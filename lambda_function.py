@@ -363,11 +363,6 @@ def lambda_handler(event, context):
         # Logical level
         cl.set_proxy(next_proxy())
 
-    try:
-        cl.account_info()
-    except LoginRequired:
-        cl.relogin() # Use clean session
-
     userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
 
     ## Get Data
