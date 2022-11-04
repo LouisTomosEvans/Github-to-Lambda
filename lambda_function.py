@@ -46,7 +46,7 @@ def rebuild_client_settings(self, device=None):
         TableName='instagram_creds',
         Item=userItem
     )
-    return self.client_settings
+    return self.get_settings()
 
 def build_client_settings(self, device=None):
     client_settings = self.get_settings()
@@ -252,7 +252,7 @@ def handle_exception(client, e):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
                 client.set_proxy(next_proxy())
-                client.settings = rebuild_client_settings(client)
+                client.set_settings(rebuild_client_settings(client))
             else:
                 try:
                     client.challenge_resolve(client.last_json)
