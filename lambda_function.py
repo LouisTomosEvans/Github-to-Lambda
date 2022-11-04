@@ -36,7 +36,8 @@ def rebuild_client_settings(self, device=None):
     self.set_locale('en_US')
     self.set_timezone_offset(-7 * 60 * 60)
     self.set_settings(client_settings)
-    self.login(relogin=True)
+    self.relogin()
+    print(self.get_settings())
     userItem = userObj['Item']
     userItem['Settings']['S'] = json.dumps(self.get_settings(), indent = 4)
     dynamoclient = boto3.client('dynamodb')
