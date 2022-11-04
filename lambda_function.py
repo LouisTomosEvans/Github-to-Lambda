@@ -51,7 +51,6 @@ def build_client_settings(self, device=None):
     if not device:
         random_id = random.randint(1, 11)
         deviceObj = device_array[0]
-    self.device(deviceObj)
     client_settings["device_settings"] = deviceObj
     client_settings["user_agent"] = user_agent_array[0]
     return client_settings
