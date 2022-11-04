@@ -36,7 +36,7 @@ from instagrapi.mixins.challenge import ChallengeChoice
 
 def rebuild_client_settings(self, device=None):
     self.client_settings = {}
-    self.build_client_settings(device)
+    build_client_settings(self, device)
     self.login(relogin=True)
     return self.client_settings
 
