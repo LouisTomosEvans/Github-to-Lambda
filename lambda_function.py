@@ -65,7 +65,7 @@ def update_client_settings(self, settings):
 
 def next_proxy():
     dynamoclient = boto3.client('dynamodb')
-    random_id = random.randint(1, 11)
+    random_id = random.randint(1, 10)
     data = dynamoclient.get_item(
         TableName='proxies',
         Key={
@@ -364,6 +364,7 @@ def lambda_handler(event, context):
         cl.set_proxy(next_proxy())
 
     userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
+    print(cl.cookie_dict)
 
     ## Get Data
     UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
