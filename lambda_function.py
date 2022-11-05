@@ -32,10 +32,12 @@ from instagrapi.mixins.challenge import ChallengeChoice
 
 
 def rebuild_client_settings(self, device=None):
-    client_settings = build_client_settings(self, device)
+    userItem = userObj['Item']
+    #client_settings = build_client_settings(self, device)
+    self.set_settings(json.loads(userItem['Settings']['S']))
     self.set_locale('en_US')
     self.set_timezone_offset(-7 * 60 * 60)
-    self.set_settings(client_settings)
+    #self.set_settings(client_settings)
     print(self.get_settings())
     self.login(IG_Username, IG_Password)
     print(self.get_settings())
@@ -52,8 +54,8 @@ def build_client_settings(self, device=None):
     client_settings = self.get_settings()
     deviceObj = device_array[0]
     uaStr = user_agent_array[0]
-    client_settings["device_settings"] = deviceObj
-    client_settings["user_agent"] = uaStr
+    #client_settings["device_settings"] = deviceObj
+    #client_settings["user_agent"] = uaStr
     return client_settings
 
 def update_client_settings(self, settings):
@@ -239,7 +241,7 @@ def handle_exception(client, e):
         dynamoclient = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
-            client.set_proxy(next_proxy())
+            #client.set_proxy(next_proxy())
             if client.relogin_attempt > 0:
                 on_error(e, 7*24*60)
                 raise ReloginAttemptExceeded(e)
@@ -251,7 +253,7 @@ def handle_exception(client, e):
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
-                client.set_proxy(next_proxy())
+                #client.set_proxy(next_proxy())
                 client.set_settings(rebuild_client_settings(client))
             else:
                 try:
@@ -299,19 +301,19 @@ def lambda_handler(event, context):
     global device_array
     global user_agent_array
 
-    device_array = [{
-      "cpu": "h1",
-      "dpi": "640dpi",
-      "model": "h1",
-      "device": "RS988",
-      "resolution": "1440x2392",
-      "app_version": "117.0.0.28.123",
-      "manufacturer": "LGE/lge",
-      "version_code": "168361634",
-      "android_release": "6.0.1",
-      "android_version": 23
-    }]
-    user_agent_array = ["Instagram 117.0.0.28.123 Android (23/6.0.1; 640dpi; 1440x2392; LGE/lge; h1; RS988; h1; en_US; 168361634)"]
+    # device_array = [{
+    #   "cpu": "h1",
+    #   "dpi": "640dpi",
+    #   "model": "h1",
+    #   "device": "RS988",
+    #   "resolution": "1440x2392",
+    #   "app_version": "117.0.0.28.123",
+    #   "manufacturer": "LGE/lge",
+    #   "version_code": "168361634",
+    #   "android_release": "6.0.1",
+    #   "android_version": 23
+    # }]
+    # user_agent_array = ["Instagram 117.0.0.28.123 Android (23/6.0.1; 640dpi; 1440x2392; LGE/lge; h1; RS988; h1; en_US; 168361634)"]
 
     ## Example Use Multi-Account (Max 100 requests a day to be safe)
     
