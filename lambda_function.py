@@ -176,7 +176,7 @@ def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
     return medias
 
 def get_code_from_email(username):
-    mail = imaplib.IMAP4_SSL("imap.outlook.com")
+    mail = imaplib.IMAP4_SSL("imap.mail.ru")
     mail.login(Email_Username, Email_Password)
     mail.select("inbox")
     result, data = mail.search(None, "(UNSEEN)")
