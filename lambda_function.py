@@ -38,9 +38,6 @@ def rebuild_client_settings(self, device=None):
     self.set_locale('en_US')
     self.set_timezone_offset(-7 * 60 * 60)
     #self.set_settings(client_settings)
-    print(self.get_settings())
-    self.login(IG_Username, IG_Password)
-    print(self.get_settings())
     userItem = userObj['Item']
     userItem['Settings']['S'] = json.dumps(self.get_settings(), indent = 4)
     dynamoclient = boto3.client('dynamodb')
@@ -92,7 +89,7 @@ def get_proxy(id):
 
 def get_user():
     dynamoclient = boto3.client('dynamodb')
-    random_id = random.randint(1, 10)
+    random_id = random.randint(1, 50)
     data = dynamoclient.get_item(
         TableName='instagram_creds',
         Key={
@@ -241,22 +238,26 @@ def handle_exception(client, e):
         dynamoclient = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
-            #client.set_proxy(next_proxy())
+            print('Bad Password')
             if client.relogin_attempt > 0:
                 on_error(e, 7*24*60)
                 raise ReloginAttemptExceeded(e)
         elif isinstance(e, LoginRequired):
             client.logger.exception(e)
+            print('Login Required')
             client.relogin()
             userObj['Item']['Settings']['S'] = json.dumps(client.get_settings(), indent = 4) 
             return
         elif isinstance(e, ChallengeRequired):
             api_path = client.last_json.get("challenge", {}).get("api_path")
             if api_path == "/challenge/":
+                print('Challenge')
                 #client.set_proxy(next_proxy())
                 client.set_settings(rebuild_client_settings(client))
+                client.login(IG_Username, IG_Password)
             else:
                 try:
+                    print('Challenge Resolve')
                     client.challenge_resolve(client.last_json)
                 except ChallengeRequired as e:
                     on_error(e, 2*24*60)
