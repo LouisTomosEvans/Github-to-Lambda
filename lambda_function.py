@@ -238,10 +238,12 @@ def handle_exception(client, e):
         dynamoclient = boto3.client('dynamodb')
         if isinstance(e, BadPassword):
             client.logger.exception(e)
+            client.set_proxy(next_proxy())
             print('Bad Password')
             if client.relogin_attempt > 0:
                 on_error(e, 7*24*60)
                 raise ReloginAttemptExceeded(e)
+            client.set_settings(rebuild_client_settings(client))
         elif isinstance(e, LoginRequired):
             client.logger.exception(e)
             print('Login Required')
@@ -367,14 +369,12 @@ def lambda_handler(event, context):
         cl.set_proxy(next_proxy())
 
     userItem['Settings']['S'] = json.dumps(cl.get_settings(), indent = 4) 
-    print(cl.cookie_dict)
 
     ## Get Data
     UserID = Instagram_Get_User_Info(Search_Username, cl, retry_id)
     UserMedia = Instagram_Get_User_Media(UserID, cl, num_posts, retry_id)
 
     ##
-    userItem = userObj['Item']
     userItem['Usage']['N'] = str(int(userItem['Usage']['N']) + 1)
     data = dynamoclient.put_item(
         TableName='instagram_creds',
