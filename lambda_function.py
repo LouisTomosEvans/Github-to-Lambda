@@ -396,7 +396,7 @@ def lambda_handler(event, context):
         TableName='media',
         Item={
             'id': {
-                'S': media.pk
+                'S': media.pk + "_" + retry_id
             },
             'poll-id': {
                 'S': retry_id
