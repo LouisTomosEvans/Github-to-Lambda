@@ -119,22 +119,7 @@ def get_user():
 
 
 def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
-    try:
-        user = cl.user_info_by_username(SEARCH_USERNAME)
-    except:
-        dynamoclient = boto3.client('dynamodb')
-        data = dynamoclient.put_item(
-        TableName='long-poll',
-        Item={
-            'id': {
-                'S': retry_id
-            },
-            'response': {
-                'S': "Error: Couldn't get user info!"
-            }
-        }
-        )
-        raise
+    user = cl.user_info_by_username(SEARCH_USERNAME)
     if(user.is_private == False):
         return user.pk
     else:
@@ -155,24 +140,7 @@ def Instagram_Get_User_Info(SEARCH_USERNAME, cl, retry_id):
         )
 
 def Instagram_Get_User_Media(USER_ID, cl, num_posts, retry_id):
-    try:
-        medias = cl.user_medias_v1(USER_ID, int(num_posts))
-    except:
-        dynamoclient = boto3.client('dynamodb')
-        data = dynamoclient.put_item(
-        TableName='long-poll',
-        Item={
-            'id': {
-                'S': retry_id
-            },
-            'response': {
-                'S': "Error: Couldn't get user's medias!"
-            },
-            'Status': {
-                'S': "Error"
-            }
-        }
-        )
+    medias = cl.user_medias_v1(USER_ID, int(num_posts))
     return medias
 
 def get_code_from_email(username):
