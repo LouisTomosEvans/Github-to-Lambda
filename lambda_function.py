@@ -360,8 +360,6 @@ def lambda_handler(event, context):
         if media.thumbnail_url is None:
             media.thumbnail_url = ""
 
-        print(media)
-
         data = dynamoclient.put_item(
         TableName='media',
         Item={
