@@ -380,6 +380,12 @@ def lambda_handler(event, context):
             },
             'thumbnail': {
                 'S': media.thumbnail_url
+            }, 
+            'code': {
+                'S': media.code
+            }, 
+            'date': {
+                'S': media.date
             }
         }
         )
