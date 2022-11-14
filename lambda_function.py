@@ -385,7 +385,7 @@ def lambda_handler(event, context):
                 'S': media.code
             }, 
             'date': {
-                'S': media.date
+                'S': media.taken_at
             }
         }
         )
