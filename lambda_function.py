@@ -360,6 +360,8 @@ def lambda_handler(event, context):
         if media.thumbnail_url is None:
             media.thumbnail_url = ""
 
+        epoch = (media.taken_at - datetime(1970, 1, 1)).total_seconds()
+
         data = dynamoclient.put_item(
         TableName='media',
         Item={
@@ -385,7 +387,7 @@ def lambda_handler(event, context):
                 'S': media.code
             }, 
             'date': {
-                'S': media.taken_at
+                'S': str(epoch)
             }
         }
         )
