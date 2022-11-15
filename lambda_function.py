@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 from instagrapi import Client
 import boto3
@@ -360,7 +360,9 @@ def lambda_handler(event, context):
         if media.thumbnail_url is None:
             media.thumbnail_url = ""
 
-        epoch = (media.taken_at - datetime(1970, 1, 1).tz_convert(None)).total_seconds()
+        dt_epoch = datetime(1970, 1, 1)
+        dt_epoch = dt_epoch.replace(tzinfo=timezone.utc)
+        epoch = (media.taken_at - dt_epoch).total_seconds()
 
         data = dynamoclient.put_item(
         TableName='media',
